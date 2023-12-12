@@ -15,13 +15,8 @@ routerP.get("/", async (req, res) => {
     res.send({ status: "success", payload: result })
 })
 
-/* http://localhost:8080/products
-  {
-   "image": "imagen1.jpg",
-   "stock": 10,
-   "category": "belleza",
-   "availability": "in_stock"
- }*/
+// http://localhost:8080/products
+
 
 routerP.post("/", async (req, res) => {
     let { description, image, price, stock, category, availability } = req.body
