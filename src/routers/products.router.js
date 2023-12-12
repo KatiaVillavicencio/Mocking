@@ -2,9 +2,50 @@ import { Router } from 'express';
 import ProductDTO from "../dto/product.dto.js";
 import { productService } from "../repositories/index.js";
 import ProductManager from '../dao/classes/productManagerMongo.js';
-
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enum.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 
 const routerP = Router()
+
+const productMongo = new ProductManager()
+
+routerP.get("/", async (req, res) => {
+    let result = await productMongo.get()
+    res.send({ status: "success", payload: result })
+})
+=
+// http://localhost:8080/products//
+// {
+//     "image": "imagen1.jpg",
+//     "stock": 10,
+//     "category": "belleza",
+//     "availability": "in_stock"
+// }
+
+routerP.post("/", async (req, res) => {
+    let { description, image, price, stock, category, availability } = req.body
+    const product = { description, image, price, stock, category, availability}
+    if (!description || !price) {
+        try {
+            //  throw and error
+            throw CustomError.createError({
+                name: 'Error en Creacion de Producto',
+                cause: generateProductErrorInfo(product),
+                message: 'Error al intentar crear el Producto',
+                code: EErrors.REQUIRED_DATA,
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    let prod = new ProductDTO({ description, image, price, stock, category, availability })
+    let result = await productService.createProduct(prod)
+})
+
+export default routerP
+
+/*const routerP = Router()
 const pm = new ProductManager()
 
 //ENDPOINTS
@@ -101,4 +142,4 @@ routerP.get('/', async (req, res) => {
   });
 
   
-export default routerP
+export default routerP*/
