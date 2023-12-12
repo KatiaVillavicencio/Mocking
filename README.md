@@ -1,1 +1,2 @@
-# Mocking
+# Mocking y manejo de errores
+
